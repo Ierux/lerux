@@ -1,7 +1,7 @@
 local debugLogModule = {}
 debugLogModule.__index = debugLogModule
 
-function debugLogModule.initializeLog(category)
+function debugLogModule:initializeLog(category)
 	local self = setmetatable({}, debugLogModule)
 
 	self.logData = {}
