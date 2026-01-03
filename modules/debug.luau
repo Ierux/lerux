@@ -3,7 +3,7 @@ debugLogModule.__index = debugLogModule
 
 local function getTimestamp()
 	local t = time()
-	return string.format("%s.%03d",os.date("%Y-%m-%d %H:%M:%S", math.floor(t)),math.floor((t - seconds) * 1000))
+	return string.format("%s.%03d",os.date("%Y-%m-%d %H:%M:%S", math.floor(t)),math.floor((t - math.floor(t)) * 1000))
 end
 
 function debugLogModule:initializeLog(category)
