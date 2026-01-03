@@ -2,7 +2,7 @@ local debugLogModule = {}
 debugLogModule.__index = debugLogModule
 
 local function getTimestamp()
-	local t = time()
+	local t = tick()
 	return string.format("%s.%03d",os.date("%Y-%m-%d %H:%M:%S", math.floor(t)),math.floor((t - math.floor(t)) * 1000))
 end
 
