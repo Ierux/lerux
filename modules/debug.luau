@@ -1,12 +1,17 @@
 local debugLogModule = {}
 debugLogModule.__index = debugLogModule
 
+local function getTimestamp()
+	local t = time()
+	return string.format("%s.%03d",os.date("%Y-%m-%d %H:%M:%S", math.floor(t)),math.floor((t - seconds) * 1000))
+end
+
 function debugLogModule:initializeLog(category)
 	local self = setmetatable({}, debugLogModule)
 
 	self.logData = {}
 	self.logSequence = 0
-	self.initialized = os.date("%Y-%m-%d %H:%M:%S") .. string.format(".%03d", math.floor((os.clock() % 1) * 1000))
+	self.initialized = getTimestamp()
 	self.logCategory = category or "UNKNOWN"
 
 	return self
@@ -25,9 +30,8 @@ function debugLogModule:log(args)
 	local level = typeof(args.Level) == "string" and args.Level:upper() or "UNKNOWN"
 	local system = typeof(args.System) == "string" and args.System:upper() or "UNKNOWN"
 	local message = args.Message or "NO MESSAGE PROVIDED"
-	local timestamp = os.date("%Y-%m-%d %H:%M:%S")
-	
-	table.insert(self.logData, string.format("#%04d [%s] [%s] [%s] %s", self.logSequence, timestamp, level, system, message))
+
+	table.insert(self.logData, string.format("#%04d [%s] [%s] [%s] %s", self.logSequence, getTimestamp(), level, system, message))
 end
 
 function debugLogModule:exportLogs()
@@ -38,7 +42,7 @@ function debugLogModule:exportLogs()
 	
 	local top = `=== LOG CATEGORY: {self.logCategory:upper()} ===`
 	local initialized = `LOG INITIALIZED: {self.initialized}`
-	local exported = `LOG EXPORTED: {os.date("%Y-%m-%d %H:%M:%S") .. string.format(".%03d", math.floor((os.clock() % 1) * 1000))}`
+	local exported = `LOG EXPORTED: {getTimestamp()}`
 	local bottom = string.rep("=", #top)
 	local header = top .. "\n" .. initialized .. "\n" .. exported .. "\n" .. bottom
 	
@@ -55,7 +59,7 @@ function debugLogModule:downloadLogs()
 		makefolder("Lerux-Debug")
 	end
 	
-	writefile("Lerux-Debug/" .. os.date("%Y-%m-%d_%H-%M-%S") .. ".txt", self:exportLogs())
+	writefile("Lerux-Debug/" .. os.date("%Y-%m-%d_%H-%M-%S") .. ".log", self:exportLogs())
 end
 
 return debugLogModule
