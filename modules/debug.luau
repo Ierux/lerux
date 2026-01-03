@@ -5,6 +5,7 @@ function debugLogModule:initializeLog(category)
 	local self = setmetatable({}, debugLogModule)
 
 	self.logData = {}
+	self.logSequence = 0
 	self.initialized = os.date("%Y-%m-%d %H:%M:%S") .. string.format(".%03d", math.floor((os.clock() % 1) * 1000))
 	self.logCategory = category or "UNKNOWN"
 
@@ -18,12 +19,15 @@ function debugLogModule:log(args)
 		warn("Caller missing logData")
 		return
 	end
+
+	self.logSequence += 1
 	
 	local level = typeof(args.Level) == "string" and args.Level:upper() or "UNKNOWN"
 	local system = typeof(args.System) == "string" and args.System:upper() or "UNKNOWN"
 	local message = args.Message or "NO MESSAGE PROVIDED"
+	local timestamp = os.date("%Y-%m-%d %H:%M:%S")
 	
-	table.insert(self.logData, `[{os.date("%Y-%m-%d %H:%M:%S") .. string.format(".%03d", math.floor((os.clock() % 1) * 1000))}] [{level}] [{system}] {message}`)
+	table.insert(self.logData, string.format("#%04d [%s] [%s] [%s] %s", self.logSequence, timestamp, level, system, message))
 end
 
 function debugLogModule:exportLogs()
